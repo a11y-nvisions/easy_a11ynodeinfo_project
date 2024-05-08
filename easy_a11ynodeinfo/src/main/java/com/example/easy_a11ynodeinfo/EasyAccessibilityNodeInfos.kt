@@ -25,89 +25,45 @@ enum class AccessibilityRole(val value: CharSequence) {
 data class EasyA11yNodeInfoInit (
     var checkable:Boolean? = null,
     var checked:Boolean? = null,
+    var clickable:Boolean? = null,
     var itemCount:Int? = null,
     var itemIndex:Int? = null,
     var heading:Boolean? = null,
+    var enabled:Boolean? = true,
     var selected:Boolean? = null,
     var expanded:Boolean? = null,
+    var focusable:Boolean? = null,
     var label:String? = null,
     var role: AccessibilityRole? = null,
     var hint:String? = null,
 )
 
-class EasyA11yNodeInfoManager {
-    private val semantics: EasyA11yNodeInfoInit;
-    val view:View;
+class EasyA11yNodeInfoManager(val view: View) {
+    private val semantics: EasyA11yNodeInfoInit = EasyA11yNodeInfoInit();
 
-    constructor( view: View, init: EasyA11yNodeInfoInit? = null ) {
-        this.view = view;
-        this.semantics = init?.let { it }?: EasyA11yNodeInfoInit();
-
-        this.view.accessibilityDelegate = object : View.AccessibilityDelegate() {
-            override fun onInitializeAccessibilityNodeInfo(
-                host: View,
-                info: AccessibilityNodeInfo
-            ) {
-                super.onInitializeAccessibilityNodeInfo(host, info)
-                val infoCompat = AccessibilityNodeInfoCompat.wrap(info)
-
-                isCheckable?.let {
-                    info.isCheckable =  it;
-                }
-                isChecked?.let {
-                    info.isChecked =  it;
-                }
-                isSelected?.let {
-                    info.isSelected =  it;
-                }
-                isHeading?.let {
-                    info.isHeading =  it;
-                }
-                isExpanded?.let {
-                    if(it) {
-                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE);
-                    } else {
-                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND);
-                    }
-                }
-                label?.let {
-                    info.contentDescription = it
-                }
-                hint?.let {
-                    info.hintText = it
-                }
-                role?.let {
-                    info.className = it.value
-                    if(it.value == AccessibilityRole.TAB.value) {
-                        infoCompat.roleDescription = view.resources.getString(MaterialRes.string.item_view_role_description)
-                        infoCompat.isCheckable = false
-                        infoCompat.isChecked = false
-
-                        val index = itemIndex
-                        val count = itemCount
-                        val selected = isSelected
-                        if(index != null && count != null && selected != null) {
-                            infoCompat.setCollectionInfo(CollectionInfoCompat.obtain(1, count,false, CollectionInfo.SELECTION_MODE_SINGLE))
-                            infoCompat.setCollectionItemInfo(CollectionItemInfoCompat.obtain(0,1,index,1,false, selected))
-                            if(selected) {
-                                infoCompat.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
-                                infoCompat.isClickable = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        this.isChecked = this.semantics.checked;
-        this.isCheckable = this.semantics.checkable;
-        this.hint = this.semantics.hint;
-        this.label = this.semantics.label;
-        this.role = this.semantics.role;
-        this.isExpanded = this.semantics.expanded;
-        this.isSelected = this.semantics.selected;
-        reloadNodeInfo();
+    fun setFocusable(focusable:Boolean):EasyA11yNodeInfoManager {
+        this.isFocusable = focusable
+        return this
     }
+    private var isFocusable:Boolean?
+        get() = this.semantics.focusable
+        set(v) { this.semantics.focusable = v }
+
+    fun setClickable(clickable:Boolean):EasyA11yNodeInfoManager {
+        this.semantics.clickable = clickable
+        return this
+    }
+    private var isClickable:Boolean?
+        get() = this.semantics.clickable
+        set(v) { this.semantics.clickable = v }
+    fun setEnabled(enabled:Boolean): EasyA11yNodeInfoManager {
+        this.isEnabled = enabled
+        this.reloadNodeInfo();
+        return this;
+    }
+    private var isEnabled:Boolean?
+        get() = this.semantics.enabled
+        set(v) { this.semantics.enabled = v }
 
     fun setItemIndex(num: Int): EasyA11yNodeInfoManager {
         this.itemIndex = num;
@@ -200,6 +156,86 @@ class EasyA11yNodeInfoManager {
 
     private fun reloadNodeInfo() {
         this.view.createAccessibilityNodeInfo();
+    }
+
+    init {
+        this.view.accessibilityDelegate = object : View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfo
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                val infoCompat = AccessibilityNodeInfoCompat.wrap(info)
+
+                isFocusable?.let {
+                    info.isFocusable = it
+                }
+                isClickable?.let {
+                    info.isClickable = it
+                }
+
+                isEnabled?.let {
+                    info.isEnabled = it
+                }
+
+                isCheckable?.let {  info.isCheckable = it;  }
+                isChecked?.let {
+                    if( isCheckable == null || isCheckable == false) {
+                        isCheckable = true
+                    }
+                    info.isChecked =  it;
+                }
+                isSelected?.let {
+                    info.isSelected =  it;
+                }
+                isHeading?.let {
+                    info.isHeading =  it;
+                }
+                isExpanded?.let {
+                    if(it) {
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE);
+                    } else {
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND);
+                    }
+                }
+                label?.let {
+                    info.contentDescription = it
+                }
+                hint?.let {
+                    info.hintText = it
+                }
+                role?.let {
+                    info.className = it.value
+                    if(it.value == AccessibilityRole.TAB.value) {
+                        infoCompat.roleDescription = view.resources.getString(MaterialRes.string.item_view_role_description)
+                        infoCompat.isCheckable = false
+                        infoCompat.isChecked = false
+                        val index = itemIndex
+                        val count = itemCount
+                        val selected = isSelected
+                        if(index != null && count != null && selected != null) {
+                            infoCompat.setCollectionInfo(CollectionInfoCompat.obtain(1, count,false, CollectionInfo.SELECTION_MODE_SINGLE))
+                            infoCompat.setCollectionItemInfo(CollectionItemInfoCompat.obtain(0,1,index,1,false, selected))
+                            if(selected) {
+                                infoCompat.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+                                infoCompat.isClickable = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        this.isChecked = this.semantics.checked
+        this.isCheckable = this.semantics.checkable
+        this.isEnabled = this.semantics.enabled
+        this.isClickable = this.semantics.clickable
+        this.isFocusable = this.semantics.focusable
+        this.hint = this.semantics.hint
+        this.label = this.semantics.label
+        this.role = this.semantics.role
+        this.isExpanded = this.semantics.expanded
+        this.isSelected = this.semantics.selected
+        reloadNodeInfo()
     }
 }
 
