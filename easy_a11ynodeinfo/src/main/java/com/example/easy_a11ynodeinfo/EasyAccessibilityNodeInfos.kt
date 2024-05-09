@@ -42,7 +42,7 @@ data class EasyA11yNodeInfoInit (
 )
 
 class EasyA11yNodeInfoManager(val view: View) {
-    private val semantics: EasyA11yNodeInfoInit = EasyA11yNodeInfoInit();
+    private val semantics: EasyA11yNodeInfoInit = EasyA11yNodeInfoInit()
 
     fun setFocusable(focusable:Boolean):EasyA11yNodeInfoManager {
         this.isFocusable = focusable
@@ -61,104 +61,104 @@ class EasyA11yNodeInfoManager(val view: View) {
         set(v) { this.semantics.clickable = v }
     fun setEnabled(enabled:Boolean): EasyA11yNodeInfoManager {
         this.isEnabled = enabled
-        this.reloadNodeInfo();
-        return this;
+        this.reloadNodeInfo()
+        return this
     }
     private var isEnabled:Boolean?
         get() = this.semantics.enabled
         set(v) { this.semantics.enabled = v }
 
     fun setItemIndex(num: Int): EasyA11yNodeInfoManager {
-        this.itemIndex = num;
-        this.reloadNodeInfo();
-        return this;
+        this.itemIndex = num
+        this.reloadNodeInfo()
+        return this
     }
     private var itemIndex:Int?
         get() = this.semantics.itemIndex
-        set(num) { this.semantics.itemIndex = num; }
+        set(num) { this.semantics.itemIndex = num }
 
     fun setItemCount(num: Int): EasyA11yNodeInfoManager {
-        this.itemCount = num;
-        this.reloadNodeInfo();
-        return this;
+        this.itemCount = num
+        this.reloadNodeInfo()
+        return this
     }
     private var itemCount:Int?
         get() = this.semantics.itemCount
-        set(num) { this.semantics.itemCount = num; }
+        set(num) { this.semantics.itemCount = num }
 
     fun setHeading(boolean: Boolean): EasyA11yNodeInfoManager {
-        this.isHeading = boolean;
-        this.reloadNodeInfo();
-        return this;
+        this.isHeading = boolean
+        this.reloadNodeInfo()
+        return this
     }
     private var isHeading:Boolean?
         get() = this.semantics.heading
-        set(v) { this.semantics.heading = v; }
+        set(v) { this.semantics.heading = v }
 
     fun setSelected(boolean: Boolean): EasyA11yNodeInfoManager {
-        this.isSelected = boolean;
-        this.reloadNodeInfo();
-        return this;
+        this.isSelected = boolean
+        this.reloadNodeInfo()
+        return this
     }
     private var isSelected:Boolean?
         get() = this.semantics.selected
-        set(v) { this.semantics.selected = v; }
+        set(v) { this.semantics.selected = v }
 
     fun setCheckable(boolean:Boolean): EasyA11yNodeInfoManager {
-        this.isCheckable = boolean;
-        this.reloadNodeInfo();
-        return this;
+        this.isCheckable = boolean
+        this.reloadNodeInfo()
+        return this
     }
     private var isCheckable:Boolean?
-        get() = this.semantics.checkable;
-        set(v) {  this.semantics.checkable = v; }
+        get() = this.semantics.checkable
+        set(v) {  this.semantics.checkable = v }
 
     fun setChecked(boolean:Boolean): EasyA11yNodeInfoManager {
-        this.isChecked = boolean;
-        this.reloadNodeInfo();
-        return this;
+        this.isChecked = boolean
+        this.reloadNodeInfo()
+        return this
     }
     private var isChecked:Boolean?
-        get() = this.semantics.checked;
-        set(v) {  this.semantics.checked = v;}
+        get() = this.semantics.checked
+        set(v) {  this.semantics.checked = v}
 
     fun setExpanded(boolean:Boolean): EasyA11yNodeInfoManager {
-        this.isExpanded = boolean;
-        this.reloadNodeInfo();
-        return this;
+        this.isExpanded = boolean
+        this.reloadNodeInfo()
+        return this
     }
     private var isExpanded:Boolean?
-        get() = this.semantics.expanded;
-        set(v) {  this.semantics.expanded = v;}
+        get() = this.semantics.expanded
+        set(v) {  this.semantics.expanded = v}
 
     fun setLabel(string:String): EasyA11yNodeInfoManager {
-        this.label = string;
-        this.reloadNodeInfo();
-        return this;
+        this.label = string
+        this.reloadNodeInfo()
+        return this
     }
     private var label:String?
-        get() = this.semantics.label;
-        set(v) {  this.semantics.label = v;}
+        get() = this.semantics.label
+        set(v) {  this.semantics.label = v}
     fun setHint(string:String): EasyA11yNodeInfoManager {
-        this.hint = string;
-        this.reloadNodeInfo();
-        return this;
+        this.hint = string
+        this.reloadNodeInfo()
+        return this
     }
     private var hint:String?
-        get() = this.semantics.hint;
-        set(v) {  this.semantics.hint = v;}
+        get() = this.semantics.hint
+        set(v) {  this.semantics.hint = v}
 
     fun setRole(role: AccessibilityRole): EasyA11yNodeInfoManager {
-        this.role = role;
-        this.reloadNodeInfo();
-        return this;
+        this.role = role
+        this.reloadNodeInfo()
+        return this
     }
     private var role: AccessibilityRole?
         get() = this.semantics.role
-        set(v) {  this.semantics.role = v;}
+        set(v) {  this.semantics.role = v}
 
     private fun reloadNodeInfo() {
-        this.view.createAccessibilityNodeInfo();
+        this.view.createAccessibilityNodeInfo()
     }
 
     init {
@@ -181,12 +181,12 @@ class EasyA11yNodeInfoManager(val view: View) {
                     info.isEnabled = it
                 }
 
-                isCheckable?.let {  info.isCheckable = it;  }
+                isCheckable?.let {  info.isCheckable = it  }
                 isChecked?.let {
                     if( isCheckable == null || isCheckable == false) {
                         isCheckable = true
                     }
-                    info.isChecked =  it;
+                    info.isChecked =  it
                     if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.R ) {
                         if(role == AccessibilityRole.SWITCH || role == AccessibilityRole.TOGGLE_BUTTON) {
                             info.stateDescription = if (it) view.context.getString(AppCompatRes.string.abc_capital_on) else
@@ -197,16 +197,16 @@ class EasyA11yNodeInfoManager(val view: View) {
                     }
                 }
                 isSelected?.let {
-                    info.isSelected =  it;
+                    info.isSelected =  it
                 }
                 isHeading?.let {
-                    info.isHeading =  it;
+                    info.isHeading =  it
                 }
                 isExpanded?.let {
                     if(it) {
-                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE);
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE)
                     } else {
-                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND);
+                        info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND)
                     }
                 }
                 label?.let {
@@ -229,8 +229,8 @@ class EasyA11yNodeInfoManager(val view: View) {
                             infoCompat.setCollectionInfo(CollectionInfoCompat.obtain(1, count,false, CollectionInfo.SELECTION_MODE_SINGLE))
                             infoCompat.setCollectionItemInfo(CollectionItemInfoCompat.obtain(0,1,index,1,false, selected))
                             if(selected) {
-                                infoCompat.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
-                                infoCompat.isClickable = false;
+                                infoCompat.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK)
+                                infoCompat.isClickable = false
                             }
                         }
                     }
