@@ -1,4 +1,5 @@
 package com.example.easy_a11ynodeinfo
+import android.os.Build
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityNodeInfo.CollectionInfo
@@ -7,6 +8,8 @@ import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.Switch
 import android.widget.ToggleButton
+import androidx.annotation.RequiresApi
+import androidx.appcompat.R as AppCompatRes
 import com.google.android.material.R as MaterialRes
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionInfoCompat
@@ -184,6 +187,14 @@ class EasyA11yNodeInfoManager(val view: View) {
                         isCheckable = true
                     }
                     info.isChecked =  it;
+                    if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.R ) {
+                        if(role == AccessibilityRole.SWITCH || role == AccessibilityRole.TOGGLE_BUTTON) {
+                            info.stateDescription = if (it) view.context.getString(AppCompatRes.string.abc_capital_on) else
+                                view.context.getString(AppCompatRes.string.abc_capital_off)
+                        } else {
+                            info.stateDescription = ""
+                        }
+                    }
                 }
                 isSelected?.let {
                     info.isSelected =  it;
@@ -207,6 +218,7 @@ class EasyA11yNodeInfoManager(val view: View) {
                 role?.let {
                     info.className = it.value
                     if(it.value == AccessibilityRole.TAB.value) {
+
                         infoCompat.roleDescription = view.resources.getString(MaterialRes.string.item_view_role_description)
                         infoCompat.isCheckable = false
                         infoCompat.isChecked = false
