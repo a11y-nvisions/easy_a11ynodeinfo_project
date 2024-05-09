@@ -1,8 +1,6 @@
 package com.example.easy_a11ynodeinfo
 import android.os.Build
-import android.view.SoundEffectConstants
 import android.view.View
-import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityNodeInfo.CollectionInfo
 import android.widget.Button
@@ -10,12 +8,12 @@ import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.Switch
 import android.widget.ToggleButton
+import androidx.core.view.ViewCompat
 import com.google.android.material.R as MaterialRes
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat
 import com.google.android.material.tabs.TabLayout.Tab
-
 enum class AccessibilityRole(val value: CharSequence) {
     BUTTON(Button::class.java.name),
     SWITCH(Switch::class.java.name),
@@ -43,6 +41,9 @@ data class EasyA11yNodeInfoInit (
 
 class EasyA11yNodeInfoManager(val view: View) {
     private val semantics: EasyA11yNodeInfoInit = EasyA11yNodeInfoInit()
+
+    private var stateDesc_switchCheckedTrue = view.context.getString(MaterialRes.string.abc_capital_on)
+    private var stateDesc_switchCheckedFalse = view.context.getString(MaterialRes.string.abc_capital_off)
 
     fun setFocusable(focusable:Boolean):EasyA11yNodeInfoManager {
         this.isFocusable = focusable
@@ -168,6 +169,7 @@ class EasyA11yNodeInfoManager(val view: View) {
                 host: View,
                 info: AccessibilityNodeInfo
             ) {
+
                 super.onInitializeAccessibilityNodeInfo(host, info)
                 val infoCompat = AccessibilityNodeInfoCompat.wrap(info)
 
@@ -184,18 +186,25 @@ class EasyA11yNodeInfoManager(val view: View) {
 
                 isCheckable?.let {  info.isCheckable = it  }
                 isChecked?.let {
+                    info.isChecked =  it
                     if( isCheckable == null || isCheckable == false) {
                         isCheckable = true
                     }
+
                     if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.R ) {
                         if(role == AccessibilityRole.SWITCH || role == AccessibilityRole.TOGGLE_BUTTON) {
-                            info.stateDescription = if (it) view.context.getString(MaterialRes.string.abc_capital_on) else
-                                view.context.getString(MaterialRes.string.abc_capital_off)
+
+                            if ( view.context.resources.configuration.locales.get(0).language == "ko" ){
+                                ViewCompat.setStateDescription(view,if (it) "켬" else "끔")
+                            } else {
+                                ViewCompat.setStateDescription(view,if (it) stateDesc_switchCheckedTrue else
+                                    stateDesc_switchCheckedFalse)
+                            }
+
                         } else {
-                            info.stateDescription = ""
+                            ViewCompat.setStateDescription(view,null)
                         }
                     }
-                    info.isChecked =  it
                 }
                 isSelected?.let {
                     info.isSelected =  it
@@ -238,6 +247,7 @@ class EasyA11yNodeInfoManager(val view: View) {
                 }
             }
         }
+
         this.isChecked = this.semantics.checked
         this.isCheckable = this.semantics.checkable
         this.isEnabled = this.semantics.enabled
