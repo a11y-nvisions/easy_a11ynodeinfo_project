@@ -115,6 +115,7 @@ class EasyA11yNodeInfoManager(val view: View) {
 
     fun setChecked(boolean:Boolean): EasyA11yNodeInfoManager {
         this.isChecked = boolean
+
         this.reloadNodeInfo()
         return this
     }
@@ -186,16 +187,15 @@ class EasyA11yNodeInfoManager(val view: View) {
                     if( isCheckable == null || isCheckable == false) {
                         isCheckable = true
                     }
-                    info.isChecked =  it
                     if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.R ) {
                         if(role == AccessibilityRole.SWITCH || role == AccessibilityRole.TOGGLE_BUTTON) {
                             info.stateDescription = if (it) view.context.getString(MaterialRes.string.abc_capital_on) else
                                 view.context.getString(MaterialRes.string.abc_capital_off)
-                                view.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
                         } else {
                             info.stateDescription = ""
                         }
                     }
+                    info.isChecked =  it
                 }
                 isSelected?.let {
                     info.isSelected =  it
