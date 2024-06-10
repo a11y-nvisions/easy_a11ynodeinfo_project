@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AgreementCheckBox">
+        <attr name="link_url" format="string|reference" />
+        <attr name="link_text_pattern" format="string|reference" />
+        <attr name="label_text" format="string|reference" />
+        <attr name="checked" format="boolean" />
+    </declare-styleable>
+</resources>
